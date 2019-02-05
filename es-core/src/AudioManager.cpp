@@ -211,7 +211,7 @@ std::vector<std::string> getMusicIn(const std::string &path) {
 
 std::shared_ptr<Music> AudioManager::getRandomMusic(std::string themeSoundDirectory) {
     // 1 check in User music directory
-    std::vector<std::string> musics = getMusicIn("/recalbox/share/music/");
+    std::vector<std::string> musics = getMusicIn("/userdata/music/");
     if (musics.empty()) {
         //  Check in theme sound directory
         if (themeSoundDirectory != "") {
@@ -242,7 +242,7 @@ void AudioManager::playCheckSound() {
 	std::string loadingMusic = getHomePath()+"/.emulationstation/themes/"+selectedTheme+"/fx/loading.ogg";
 
 	if(boost::filesystem::exists(loadingMusic) == false){
-	  loadingMusic = "/recalbox/share_init/system/.emulationstation/themes/"+selectedTheme+"/fx/loading.ogg";
+	  loadingMusic = "/usr/share/batocera/datainit/system/.emulationstation/themes/"+selectedTheme+"/fx/loading.ogg";
 	}
 
 	if(boost::filesystem::exists(loadingMusic)){

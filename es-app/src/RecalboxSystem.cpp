@@ -71,7 +71,7 @@ unsigned long RecalboxSystem::getFreeSpaceGB(std::string mountpoint) {
 }
 
 std::string RecalboxSystem::getFreeSpaceInfo() {
-    std::string sharePart = "/recalbox/share/";
+    std::string sharePart = "/userdata/";
     if (sharePart.size() > 0) {
         const char *fnPath = sharePart.c_str();
 #if !defined(WIN32)
@@ -102,7 +102,7 @@ std::string RecalboxSystem::getFreeSpaceInfo() {
 }
 
 bool RecalboxSystem::isFreeSpaceLimit() {
-    std::string sharePart = "/recalbox/share/";
+    std::string sharePart = "/userdata/";
     if (sharePart.size() > 0) {
         return getFreeSpaceGB(sharePart) < 2;
     } else {
@@ -112,7 +112,7 @@ bool RecalboxSystem::isFreeSpaceLimit() {
 }
 
 std::string RecalboxSystem::getVersion() {
-    std::string version = "/recalbox/batocera.version";
+    std::string version = "/usr/share/batocera/batocera.version";
     if (version.size() > 0) {
         std::ifstream ifs(version);
 
@@ -127,7 +127,7 @@ std::string RecalboxSystem::getVersion() {
 
 bool RecalboxSystem::needToShowVersionMessage() {
     createLastVersionFileIfNotExisting();
-    std::string versionFile = "/recalbox/share/system/update.done";
+    std::string versionFile = "/userdata/system/update.done";
     if (versionFile.size() > 0) {
         std::ifstream lvifs(versionFile);
         if (lvifs.good()) {
@@ -143,7 +143,7 @@ bool RecalboxSystem::needToShowVersionMessage() {
 }
 
 bool RecalboxSystem::createLastVersionFileIfNotExisting() {
-    std::string versionFile = "/recalbox/share/system/update.done";
+    std::string versionFile = "/userdata/system/update.done";
 
     FILE *file;
     if (file = fopen(versionFile.c_str(), "r")) {
@@ -154,7 +154,7 @@ bool RecalboxSystem::createLastVersionFileIfNotExisting() {
 }
 
 bool RecalboxSystem::updateLastVersionFile() {
-    std::string versionFile = "/recalbox/share/system/update.done";
+    std::string versionFile = "/userdata/system/update.done";
     std::string currentVersion = getVersion();
     std::ostringstream oss;
     oss << "echo " << currentVersion << " > " << versionFile;
@@ -165,21 +165,6 @@ bool RecalboxSystem::updateLastVersionFile() {
         LOG(LogError) << "Last version file updated";
         return true;
     }
-}
-
-std::string RecalboxSystem::getVersionMessage() {
-    std::string versionMessageFile = "/recalbox/recalbox.msg";
-    if (versionMessageFile.size() > 0) {
-        std::ifstream ifs(versionMessageFile);
-
-        if (ifs.good()) {
-            std::string contents((std::istreambuf_iterator<char>(ifs)),
-                                 std::istreambuf_iterator<char>());
-            return contents;
-        }
-    }
-    return "";
-
 }
 
 bool RecalboxSystem::setOverscan(bool enable) {
@@ -230,7 +215,7 @@ std::pair<std::string,int> RecalboxSystem::updateSystem(BusyComponent* ui) {
         return std::pair<std::string,int>(std::string("Cannot call update command"),-1);
     }
 
-    FILE *flog = fopen("/recalbox/share/system/logs/recalbox-upgrade.log", "w");
+    FILE *flog = fopen("/userdata/system/logs/recalbox-upgrade.log", "w");
     while (fgets(line, 1024, pipe)) {
         strtok(line, "\n");
 	if(flog != NULL) fprintf(flog, "%s\n", line);
@@ -250,7 +235,7 @@ std::pair<std::string,int> RecalboxSystem::backupSystem(BusyComponent* ui, std::
         return std::pair<std::string,int>(std::string("Cannot call sync command"),-1);
     }
 
-    FILE *flog = fopen("/recalbox/share/system/logs/recalbox-sync.log", "w");
+    FILE *flog = fopen("/userdata/system/logs/recalbox-sync.log", "w");
     while (fgets(line, 1024, pipe)) {
         strtok(line, "\n");
 	if(flog != NULL) fprintf(flog, "%s\n", line);
@@ -270,7 +255,7 @@ std::pair<std::string,int> RecalboxSystem::installSystem(BusyComponent* ui, std:
         return std::pair<std::string,int>(std::string("Cannot call install command"),-1);
     }
 
-    FILE *flog = fopen("/recalbox/share/system/logs/recalbox-install.log", "w");
+    FILE *flog = fopen("/userdata/system/logs/recalbox-install.log", "w");
     while (fgets(line, 1024, pipe)) {
         strtok(line, "\n");
 	if(flog != NULL) fprintf(flog, "%s\n", line);
@@ -290,7 +275,7 @@ std::pair<std::string,int> RecalboxSystem::scrape(BusyComponent* ui) {
     return std::pair<std::string,int>(std::string("Cannot call scrape command"),-1);
   }
   
-  FILE *flog = fopen("/recalbox/share/system/logs/recalbox-scrape.log", "w");
+  FILE *flog = fopen("/userdata/system/logs/recalbox-scrape.log", "w");
   while (fgets(line, 1024, pipe)) {
     strtok(line, "\n");
     if(flog != NULL) fprintf(flog, "%s\n", line);
