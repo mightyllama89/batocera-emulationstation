@@ -518,7 +518,7 @@ std::string RecalboxSystem::getIpAdress() {
 std::vector<std::string> *RecalboxSystem::scanBluetooth() {
     std::vector<std::string> *res = new std::vector<std::string>();
     std::ostringstream oss;
-    oss << Settings::getInstance()->getString("RecalboxSettingScript") << " " << "hcitoolscan";
+    oss << "/recalbox/scripts/recalbox-config.sh" << " " << "hcitoolscan";
     FILE *pipe = popen(oss.str().c_str(), "r");
     char line[1024];
 
@@ -537,7 +537,7 @@ std::vector<std::string> *RecalboxSystem::scanBluetooth() {
 
 bool RecalboxSystem::pairBluetooth(std::string &controller) {
     std::ostringstream oss;
-    oss << Settings::getInstance()->getString("RecalboxSettingScript") << " " << "hiddpair" << " " << controller;
+    oss << "/recalbox/scripts/recalbox-config.sh" << " " << "hiddpair" << " " << controller;
     int exitcode = system(oss.str().c_str());
     return exitcode == 0;
 }
