@@ -49,7 +49,7 @@ std::string toLower(std::string str)
 }
 //end util functions
 
-InputConfig::InputConfig(int deviceId, int deviceIndex, const std::string& deviceName, const std::string& deviceGUID, int deviceNbAxes) : mDeviceId(deviceId), mDeviceIndex(deviceIndex), mDeviceName(deviceName), mDeviceGUID(deviceGUID), mDeviceNbAxes(deviceNbAxes)
+InputConfig::InputConfig(int deviceId, int deviceIndex, const std::string& deviceName, const std::string& deviceGUID) : mDeviceId(deviceId), mDeviceIndex(deviceIndex), mDeviceName(deviceName), mDeviceGUID(deviceGUID)
 {
 }
 
@@ -87,14 +87,12 @@ bool InputConfig::getInputByName(const std::string& name, Input* result)
 	return false;
 }
 
-bool InputConfig::isMappedTo(const std::string& name, Input input, bool reversedAxis)
-{
+ bool InputConfig::isMappedTo(const std::string& name, Input input)
+ {
 	Input comp;
 	if(!getInputByName(name, &comp))
 		return false;
-	if(reversedAxis) {
-	  comp.value *= -1;
-	}
+	 
 	if(comp.configured && comp.type == input.type && comp.id == input.id)
 	{
 		if(comp.type == TYPE_HAT)
