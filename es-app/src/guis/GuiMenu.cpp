@@ -1661,8 +1661,8 @@ std::vector<std::string> GuiMenu::getDecorationsSets()
 
 	static const size_t pathCount = 2;
 	fs::path paths[pathCount] = {
-		"/usr/share/batocera/datainit/decorations",
-		"/userdata/decorations"
+		"/recalbox/share_init/decorations",
+		"/recalbox/share/decorations"
 	};
 
 	fs::directory_iterator end;
