@@ -57,7 +57,7 @@ void InputManager::init()
         this->addAllJoysticks();
 	computeLastKnownPlayersDeviceIndexes();
 
- 	mKeyboardInputConfig = new InputConfig(DEVICE_KEYBOARD, -1, "Keyboard", KEYBOARD_GUID_STRING);
+	mKeyboardInputConfig = new InputConfig(DEVICE_KEYBOARD, -1, "Keyboard", KEYBOARD_GUID_STRING, 0);
 	loadInputConfig(mKeyboardInputConfig);
 }
 
@@ -77,7 +77,7 @@ void InputManager::addJoystickByDeviceIndex(int id)
 	SDL_JoystickGetGUIDString(SDL_JoystickGetGUID(joy), guid, 65);
 
 	// create the InputConfig
- 	mInputConfigs[joyId] = new InputConfig(joyId, id, SDL_JoystickName(joy), guid);
+	mInputConfigs[joyId] = new InputConfig(joyId, id, SDL_JoystickName(joy), guid, SDL_JoystickNumAxes(joy));
 	if(!loadInputConfig(mInputConfigs[joyId]))
 	{
 		LOG(LogInfo) << "Added unconfigured joystick " << SDL_JoystickName(joy) << " (GUID: " << guid << ", instance ID: " << joyId << ", device index: " << id << ").";
@@ -195,15 +195,25 @@ bool InputManager::parseEvent(const SDL_Event& ev, Window* window)
 	switch(ev.type)
 	{
 	case SDL_JOYAXISMOTION:
+	  {
+	    // some axes are "full" : from -32000 to +32000
+	    // in this case, their unpressed state is not 0
+	    // SDL provides a function to get this value
+	    // in es, the trick is to minus this value to the value to do as if it started at 0
+	    int initialValue = 0;
+	    Sint16 x;
+	    if(SDL_JoystickGetAxisInitialState(mJoysticks[ev.jaxis.which], ev.jaxis.axis, &x)) {
+	      initialValue = x;
+	    }
 
 		//if it switched boundaries
- 		if((abs(ev.jaxis.value) > DEADZONE) != (abs(mPrevAxisValues[ev.jaxis.which][ev.jaxis.axis]) > DEADZONE))
+		if((abs(ev.jaxis.value-initialValue) > DEADZONE) != (abs(mPrevAxisValues[ev.jaxis.which][ev.jaxis.axis]) > DEADZONE))
 		{
 			int normValue;
- 			if(abs(ev.jaxis.value) <= DEADZONE)
+			if(abs(ev.jaxis.value-initialValue) <= DEADZONE)
 				normValue = 0;
 			else
- 				if(ev.jaxis.value > 0)
+				if(ev.jaxis.value-initialValue > 0)
 					normValue = 1;
 				else
 					normValue = -1;
@@ -212,9 +222,9 @@ bool InputManager::parseEvent(const SDL_Event& ev, Window* window)
 			causedEvent = true;
 		}
 
- 		mPrevAxisValues[ev.jaxis.which][ev.jaxis.axis] = ev.jaxis.value;
-			return causedEvent;
-	  
+		mPrevAxisValues[ev.jaxis.which][ev.jaxis.axis] = ev.jaxis.value-initialValue;
+		return causedEvent;
+	  }
 	case SDL_JOYBUTTONDOWN:
 	case SDL_JOYBUTTONUP:
 		window->input(getInputConfigByDevice(ev.jbutton.which), Input(ev.jbutton.which, TYPE_BUTTON, ev.jbutton.button, ev.jbutton.state == SDL_PRESSED, false));
@@ -570,8 +580,12 @@ std::string InputManager::configureEmulators() {
   for (int player = 0; player < MAX_PLAYERS; player++) {
     InputConfig * playerInputConfig = playerJoysticks[player];
     if(playerInputConfig != NULL){
+<<<<<<< HEAD
        	command << "-p" << player+1 << "index " <<  playerInputConfig->getDeviceIndex() << " -p" << player+1 << "guid " << playerInputConfig->getDeviceGUIDString() << " -p" << player+1 << "name \"" <<  playerInputConfig->getDeviceName() << "\" ";
 	command << "-p" << player+1 << "devicepath " <<  SDL_JoystickDevicePathById(playerInputConfig->getDeviceIndex()) << " ";
+=======
+      command << "-p" << player+1 << "index " <<  playerInputConfig->getDeviceIndex() << " -p" << player+1 << "guid " << playerInputConfig->getDeviceGUIDString() << " -p" << player+1 << "name \"" <<  playerInputConfig->getDeviceName() << "\" -p" << player+1 << "nbaxes " << playerInputConfig->getDeviceNbAxes() << " ";
+>>>>>>> parent of ea41c47... Controller config fixes
     }
   }
   LOG(LogInfo) << "Configure emulators command : " << command.str().c_str();
