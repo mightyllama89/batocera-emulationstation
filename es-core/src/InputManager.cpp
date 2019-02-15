@@ -571,6 +571,7 @@ std::string InputManager::configureEmulators() {
     InputConfig * playerInputConfig = playerJoysticks[player];
     if(playerInputConfig != NULL){
        	command << "-p" << player+1 << "index " <<  playerInputConfig->getDeviceIndex() << " -p" << player+1 << "guid " << playerInputConfig->getDeviceGUIDString() << " -p" << player+1 << "name \"" <<  playerInputConfig->getDeviceName() << "\" ";
+	command << "-p" << player+1 << "devicepath " <<  SDL_JoystickDevicePathById(playerInputConfig->getDeviceIndex()) << " ";
     }
   }
   LOG(LogInfo) << "Configure emulators command : " << command.str().c_str();
