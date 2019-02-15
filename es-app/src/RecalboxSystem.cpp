@@ -167,21 +167,6 @@ bool RecalboxSystem::updateLastVersionFile() {
     }
 }
 
-std::string RecalboxSystem::getVersionMessage() {
-    std::string versionMessageFile = "/recalbox/recalbox.msg";
-    if (versionMessageFile.size() > 0) {
-        std::ifstream ifs(versionMessageFile);
-
-        if (ifs.good()) {
-            std::string contents((std::istreambuf_iterator<char>(ifs)),
-                                 std::istreambuf_iterator<char>());
-            return contents;
-        }
-    }
-    return "";
-
-}
-
 bool RecalboxSystem::setOverscan(bool enable) {
 
     std::ostringstream oss;
@@ -230,7 +215,7 @@ std::pair<std::string,int> RecalboxSystem::updateSystem(BusyComponent* ui) {
         return std::pair<std::string,int>(std::string("Cannot call update command"),-1);
     }
 
-    FILE *flog = fopen("/recalbox/share/system/logs/recalbox-upgrade.log", "w");
+    FILE *flog = fopen("/userdata/system/logs/recalbox-upgrade.log", "w");
     while (fgets(line, 1024, pipe)) {
         strtok(line, "\n");
 	if(flog != NULL) fprintf(flog, "%s\n", line);
