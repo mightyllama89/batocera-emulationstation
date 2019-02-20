@@ -7,9 +7,9 @@
 using namespace GridFlags;
 
 ComponentGrid::ComponentGrid(Window* window, const Eigen::Vector2i& gridDimensions) : GuiComponent(window), 
-	mGridSize(gridDimensions), mCursor(0, 0)
+    mGridSize(gridDimensions), mCursor(0, 0), mUnhandledInputCallback(nullptr)
 {
-	assert(gridDimensions.x() > 0 && gridDimensions.y() > 0);
+    assert(gridDimensions.x() > 0 && gridDimensions.y() > 0);
 
 	mCells.reserve(gridDimensions.x() * gridDimensions.y());
 

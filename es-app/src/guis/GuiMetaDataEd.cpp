@@ -222,6 +222,21 @@ GuiMetaDataEd::GuiMetaDataEd(Window *window, MetaDataList *md, const std::vector
     mButtons = makeButtonGrid(mWindow, buttons);
     mGrid.setEntry(mButtons, Vector2i(0, 2), true, false);
 
+    mGrid.setUnhandledInputCallback([this] (InputConfig* config, Input input) -> bool {
+        if (config->isMappedTo("down", input)) {
+            mGrid.setCursorTo(mList);
+            mList->setCursorIndex(0);
+            return true;
+        }
+        if(config->isMappedTo("up", input)) {
+            mList->setCursorIndex(mList->size() - 1);
+            mGrid.moveCursor(Vector2i(0, 1));
+            return true;
+        }
+        return false;
+    });
+    
+
     // resize + center
     setSize(Renderer::getScreenWidth() * 0.5f, Renderer::getScreenHeight() * 0.82f);
     setPosition((Renderer::getScreenWidth() - mSize.x()) / 2, (Renderer::getScreenHeight() - mSize.y()) / 2);
